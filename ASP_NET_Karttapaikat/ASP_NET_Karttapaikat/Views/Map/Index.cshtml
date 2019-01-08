@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Map";
+}
+@section map_styles{
+    <link rel="Stylesheet" href="@Href("~/Content/Map.css")" />
+}
+
+    <div ng-app>
+        <h1>Hellooo {{name}}!</h1>
+        <input type="text" ng-model="name">
+    </div>
+
+    <div id ="map"></div>
+    <div id='plasecontentswindow'></div>
+
+    @Scripts.Render("~/bundles/Map")
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK8Ss9Tb1Jx-0Jv9jxJZolJruCJN1hyZk&callback=initMapPlace">
+    </script>
+
+
+
