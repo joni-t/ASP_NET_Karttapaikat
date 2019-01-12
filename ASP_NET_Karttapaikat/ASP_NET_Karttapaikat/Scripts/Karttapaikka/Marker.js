@@ -6,6 +6,10 @@ google_map_markers.MapMarkers = (function (map) {
 
         this.map = map;
         this.markers;
+        this.infowindowApp_HandleService = angular.injector(['ng', 'google_map_infowindowApp']).get('Handle');
+
+        info_window_app = angular.injector(['ng', 'google_map_infowindowApp']);
+        google_map_infowindowApp_HandleService = info_window_app.get('Handle');
 
         this.initMarkers = function () {
             this.markers = [];
@@ -28,6 +32,10 @@ google_map_markers.MapMarkers = (function (map) {
                 draggable: false
             });
             this.markers.push(marker);
+
+            this.infowindowApp_HandleService.SetPlaceFormContents(location.lat(), location.lng(), 0, "");
+            this.infowindowApp_HandleService.OpenPlaceContentsWindow(marker);
+
             //Reset_WaypointContentsForm(location.lat, location.lng);
             //SetMarker(location, marker);
             //Update_current_handled_waypoint(false, -1, marker);

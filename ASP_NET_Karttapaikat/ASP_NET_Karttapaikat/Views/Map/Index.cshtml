@@ -6,13 +6,36 @@
     <link rel="Stylesheet" href="@Href("~/Content/Map.css")" />
 }
 
-    <div ng-app>
-        <h1>Hellooo {{name}}!</h1>
-        <input type="text" ng-model="name">
-    </div>
-
     <div id ="map"></div>
-    <div id='plasecontentswindow'></div>
+    <div id='infowindow' ng-app="google_map_infowindowApp" ng-controller="InfoWindowCtrl">
+        <div id='placeinfoform' style='display:none' >
+            <table>
+                <tr>
+                    <td>Lat:</td>
+                    <td><input type='text' id='place_marker_lat' ng-model="place.lat" /> </td>
+                </tr>
+                <tr>
+                    <td>Lon:</td>
+                    <td><input type='text' id='place_marker_lon' ng-model="place.lon" /> </td>
+                </tr>
+                <tr>
+                    <td>Tyyppi:</td>
+                    <td><select id='place_marker_type' ng-model="place.typeid" ></select></td>
+                </tr>
+                <tr>
+                    <td>Kuvaus:</td>
+                    <td><input type='text' id='place_marker_description' ng-model="place.description" /> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type='button' ng-click='testi()' value='Save' id='save_place_marker' /></td>
+                </tr>
+                <tr>
+                    <td><div id='message_location_saved' style='display:none'>Location saved</div></td>
+                </tr>
+            </table>
+        </div>";
+    </div>
 
     @Scripts.Render("~/bundles/Map")
     <script async defer

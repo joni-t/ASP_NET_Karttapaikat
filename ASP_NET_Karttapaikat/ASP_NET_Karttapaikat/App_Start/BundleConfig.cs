@@ -30,7 +30,8 @@ namespace ASP_NET_Karttapaikat
                       "~/Scripts/angular.min.js",
                       "~/Scripts/Karttapaikka/Karttapaikka.js",
                       "~/Scripts/Karttapaikka/Map.js",
-                      "~/Scripts/Karttapaikka/Marker.js"));
+                      "~/Scripts/Karttapaikka/Marker.js",
+                      "~/Scripts/Karttapaikka/angular-InfoWindow.js"));
         }
     }
 }
