@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="PaikkaDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Kiertue">
+          <Key>
+            <PropertyRef Name="kiertueId" />
+          </Key>
+          <Property Name="kiertueId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="siirtymistapaId" Type="int" Nullable="false" />
+          <Property Name="kuvaus" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="KiertueEtappi">
+          <Key>
+            <PropertyRef Name="etappiId" />
+          </Key>
+          <Property Name="etappiId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="paikkaId" Type="int" Nullable="false" />
+          <Property Name="kiertueId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PaikanTyyppi">
+          <Key>
+            <PropertyRef Name="tyyppiId" />
+          </Key>
+          <Property Name="tyyppiId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="tyyppi" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Paikkamerkinta">
+          <Key>
+            <PropertyRef Name="paikkaId" />
+          </Key>
+          <Property Name="paikkaId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="lat" Type="float" Nullable="false" />
+          <Property Name="lon" Type="float" Nullable="false" />
+          <Property Name="tyyppiId" Type="int" Nullable="false" />
+          <Property Name="kuvaus" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Siirtymistapa">
+          <Key>
+            <PropertyRef Name="tapaId" />
+          </Key>
+          <Property Name="tapaId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="selite" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK_Kiertue_Siirtymistapa">
+          <End Role="Siirtymistapa" Type="Self.Siirtymistapa" Multiplicity="1" />
+          <End Role="Kiertue" Type="Self.Kiertue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Siirtymistapa">
+              <PropertyRef Name="tapaId" />
+            </Principal>
+            <Dependent Role="Kiertue">
+              <PropertyRef Name="siirtymistapaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KiertueEtappi_Kiertue">
+          <End Role="Kiertue" Type="Self.Kiertue" Multiplicity="1" />
+          <End Role="KiertueEtappi" Type="Self.KiertueEtappi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kiertue">
+              <PropertyRef Name="kiertueId" />
+            </Principal>
+            <Dependent Role="KiertueEtappi">
+              <PropertyRef Name="kiertueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KiertueEtappi_Paikkamerkinta">
+          <End Role="Paikkamerkinta" Type="Self.Paikkamerkinta" Multiplicity="1" />
+          <End Role="KiertueEtappi" Type="Self.KiertueEtappi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paikkamerkinta">
+              <PropertyRef Name="paikkaId" />
+            </Principal>
+            <Dependent Role="KiertueEtappi">
+              <PropertyRef Name="paikkaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Paikkamerkinta_PaikanTyyppi">
+          <End Role="PaikanTyyppi" Type="Self.PaikanTyyppi" Multiplicity="1" />
+          <End Role="Paikkamerkinta" Type="Self.Paikkamerkinta" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaikanTyyppi">
+              <PropertyRef Name="tyyppiId" />
+            </Principal>
+            <Dependent Role="Paikkamerkinta">
+              <PropertyRef Name="tyyppiId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PaikkaDbModelStoreContainer">
+          <EntitySet Name="Kiertue" EntityType="Self.Kiertue" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="KiertueEtappi" EntityType="Self.KiertueEtappi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PaikanTyyppi" EntityType="Self.PaikanTyyppi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Paikkamerkinta" EntityType="Self.Paikkamerkinta" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Siirtymistapa" EntityType="Self.Siirtymistapa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Kiertue_Siirtymistapa" Association="Self.FK_Kiertue_Siirtymistapa">
+            <End Role="Siirtymistapa" EntitySet="Siirtymistapa" />
+            <End Role="Kiertue" EntitySet="Kiertue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KiertueEtappi_Kiertue" Association="Self.FK_KiertueEtappi_Kiertue">
+            <End Role="Kiertue" EntitySet="Kiertue" />
+            <End Role="KiertueEtappi" EntitySet="KiertueEtappi" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KiertueEtappi_Paikkamerkinta" Association="Self.FK_KiertueEtappi_Paikkamerkinta">
+            <End Role="Paikkamerkinta" EntitySet="Paikkamerkinta" />
+            <End Role="KiertueEtappi" EntitySet="KiertueEtappi" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Paikkamerkinta_PaikanTyyppi" Association="Self.FK_Paikkamerkinta_PaikanTyyppi">
+            <End Role="PaikanTyyppi" EntitySet="PaikanTyyppi" />
+            <End Role="Paikkamerkinta" EntitySet="Paikkamerkinta" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PaikkaDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Kiertue">
+          <Key>
+            <PropertyRef Name="kiertueId" />
+          </Key>
+          <Property Name="kiertueId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="siirtymistapaId" Type="Int32" Nullable="false" />
+          <Property Name="kuvaus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Siirtymistapa" Relationship="Self.FK_Kiertue_Siirtymistapa" FromRole="Kiertue" ToRole="Siirtymistapa" />
+          <NavigationProperty Name="KiertueEtappi" Relationship="Self.FK_KiertueEtappi_Kiertue" FromRole="Kiertue" ToRole="KiertueEtappi" />
+        </EntityType>
+        <EntityType Name="KiertueEtappi">
+          <Key>
+            <PropertyRef Name="etappiId" />
+          </Key>
+          <Property Name="etappiId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="paikkaId" Type="Int32" Nullable="false" />
+          <Property Name="kiertueId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Kiertue" Relationship="Self.FK_KiertueEtappi_Kiertue" FromRole="KiertueEtappi" ToRole="Kiertue" />
+          <NavigationProperty Name="Paikkamerkinta" Relationship="Self.FK_KiertueEtappi_Paikkamerkinta" FromRole="KiertueEtappi" ToRole="Paikkamerkinta" />
+        </EntityType>
+        <EntityType Name="PaikanTyyppi">
+          <Key>
+            <PropertyRef Name="tyyppiId" />
+          </Key>
+          <Property Name="tyyppiId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="tyyppi" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Paikkamerkinta" Relationship="Self.FK_Paikkamerkinta_PaikanTyyppi" FromRole="PaikanTyyppi" ToRole="Paikkamerkinta" />
+        </EntityType>
+        <EntityType Name="Paikkamerkinta">
+          <Key>
+            <PropertyRef Name="paikkaId" />
+          </Key>
+          <Property Name="paikkaId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="lat" Type="Double" Nullable="false" />
+          <Property Name="lon" Type="Double" Nullable="false" />
+          <Property Name="tyyppiId" Type="Int32" Nullable="false" />
+          <Property Name="kuvaus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="KiertueEtappi" Relationship="Self.FK_KiertueEtappi_Paikkamerkinta" FromRole="Paikkamerkinta" ToRole="KiertueEtappi" />
+          <NavigationProperty Name="PaikanTyyppi" Relationship="Self.FK_Paikkamerkinta_PaikanTyyppi" FromRole="Paikkamerkinta" ToRole="PaikanTyyppi" />
+        </EntityType>
+        <EntityType Name="Siirtymistapa">
+          <Key>
+            <PropertyRef Name="tapaId" />
+          </Key>
+          <Property Name="tapaId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="selite" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Kiertue" Relationship="Self.FK_Kiertue_Siirtymistapa" FromRole="Siirtymistapa" ToRole="Kiertue" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_Kiertue_Siirtymistapa">
+          <End Role="Siirtymistapa" Type="Self.Siirtymistapa" Multiplicity="1" />
+          <End Role="Kiertue" Type="Self.Kiertue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Siirtymistapa">
+              <PropertyRef Name="tapaId" />
+            </Principal>
+            <Dependent Role="Kiertue">
+              <PropertyRef Name="siirtymistapaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KiertueEtappi_Kiertue">
+          <End Role="Kiertue" Type="Self.Kiertue" Multiplicity="1" />
+          <End Role="KiertueEtappi" Type="Self.KiertueEtappi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kiertue">
+              <PropertyRef Name="kiertueId" />
+            </Principal>
+            <Dependent Role="KiertueEtappi">
+              <PropertyRef Name="kiertueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KiertueEtappi_Paikkamerkinta">
+          <End Role="Paikkamerkinta" Type="Self.Paikkamerkinta" Multiplicity="1" />
+          <End Role="KiertueEtappi" Type="Self.KiertueEtappi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paikkamerkinta">
+              <PropertyRef Name="paikkaId" />
+            </Principal>
+            <Dependent Role="KiertueEtappi">
+              <PropertyRef Name="paikkaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Paikkamerkinta_PaikanTyyppi">
+          <End Role="PaikanTyyppi" Type="Self.PaikanTyyppi" Multiplicity="1" />
+          <End Role="Paikkamerkinta" Type="Self.Paikkamerkinta" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaikanTyyppi">
+              <PropertyRef Name="tyyppiId" />
+            </Principal>
+            <Dependent Role="Paikkamerkinta">
+              <PropertyRef Name="tyyppiId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PaikkaDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Kiertue" EntityType="Self.Kiertue" />
+          <EntitySet Name="KiertueEtappi" EntityType="Self.KiertueEtappi" />
+          <EntitySet Name="PaikanTyyppi" EntityType="Self.PaikanTyyppi" />
+          <EntitySet Name="Paikkamerkinta" EntityType="Self.Paikkamerkinta" />
+          <EntitySet Name="Siirtymistapa" EntityType="Self.Siirtymistapa" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <AssociationSet Name="FK_Kiertue_Siirtymistapa" Association="Self.FK_Kiertue_Siirtymistapa">
+            <End Role="Siirtymistapa" EntitySet="Siirtymistapa" />
+            <End Role="Kiertue" EntitySet="Kiertue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KiertueEtappi_Kiertue" Association="Self.FK_KiertueEtappi_Kiertue">
+            <End Role="Kiertue" EntitySet="Kiertue" />
+            <End Role="KiertueEtappi" EntitySet="KiertueEtappi" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KiertueEtappi_Paikkamerkinta" Association="Self.FK_KiertueEtappi_Paikkamerkinta">
+            <End Role="Paikkamerkinta" EntitySet="Paikkamerkinta" />
+            <End Role="KiertueEtappi" EntitySet="KiertueEtappi" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Paikkamerkinta_PaikanTyyppi" Association="Self.FK_Paikkamerkinta_PaikanTyyppi">
+            <End Role="PaikanTyyppi" EntitySet="PaikanTyyppi" />
+            <End Role="Paikkamerkinta" EntitySet="Paikkamerkinta" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PaikkaDbModelStoreContainer" CdmEntityContainer="PaikkaDbEntities">
+          <EntitySetMapping Name="Kiertue">
+            <EntityTypeMapping TypeName="PaikkaDbModel.Kiertue">
+              <MappingFragment StoreEntitySet="Kiertue">
+                <ScalarProperty Name="kiertueId" ColumnName="kiertueId" />
+                <ScalarProperty Name="siirtymistapaId" ColumnName="siirtymistapaId" />
+                <ScalarProperty Name="kuvaus" ColumnName="kuvaus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KiertueEtappi">
+            <EntityTypeMapping TypeName="PaikkaDbModel.KiertueEtappi">
+              <MappingFragment StoreEntitySet="KiertueEtappi">
+                <ScalarProperty Name="etappiId" ColumnName="etappiId" />
+                <ScalarProperty Name="paikkaId" ColumnName="paikkaId" />
+                <ScalarProperty Name="kiertueId" ColumnName="kiertueId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaikanTyyppi">
+            <EntityTypeMapping TypeName="PaikkaDbModel.PaikanTyyppi">
+              <MappingFragment StoreEntitySet="PaikanTyyppi">
+                <ScalarProperty Name="tyyppiId" ColumnName="tyyppiId" />
+                <ScalarProperty Name="tyyppi" ColumnName="tyyppi" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Paikkamerkinta">
+            <EntityTypeMapping TypeName="PaikkaDbModel.Paikkamerkinta">
+              <MappingFragment StoreEntitySet="Paikkamerkinta">
+                <ScalarProperty Name="paikkaId" ColumnName="paikkaId" />
+                <ScalarProperty Name="lat" ColumnName="lat" />
+                <ScalarProperty Name="lon" ColumnName="lon" />
+                <ScalarProperty Name="tyyppiId" ColumnName="tyyppiId" />
+                <ScalarProperty Name="kuvaus" ColumnName="kuvaus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Siirtymistapa">
+            <EntityTypeMapping TypeName="PaikkaDbModel.Siirtymistapa">
+              <MappingFragment StoreEntitySet="Siirtymistapa">
+                <ScalarProperty Name="tapaId" ColumnName="tapaId" />
+                <ScalarProperty Name="selite" ColumnName="selite" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="PaikkaDbModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

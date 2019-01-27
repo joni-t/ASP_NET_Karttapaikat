@@ -1,26 +1,37 @@
-﻿
+﻿@model ASP_NET_Karttapaikat.Models.OmaModel
+
 @{
     ViewBag.Title = "Map";
 }
 @section map_styles{
     <link rel="Stylesheet" href="@Href("~/Content/Map.css")" />
+    <link rel="Stylesheet" href="@Href("~/Content/Tab.css")" />
 }
 
-    <div id ="map"></div>
-    <div id='infowindow' ng-app="google_map_infowindowApp" ng-controller="InfoWindowCtrl">
-        <div id='placeinfoform' style='display:none' >
+<div id="map"></div>
+<div ng-app="google_map_infowindowApp">
+    <div id='infowindow' ng-controller="InfoWindowCtrl">
+        <div id='placeinfoform' style='display:none'>
             <table>
                 <tr>
                     <td>Lat:</td>
-                    <td><input type='text' id='place_marker_lat' ng-model="place.lat" /> </td>
+                    <td><input type='text' id='place_marker_lat' name='place_marker_lat' ng-model="place.lat" disabled="true" /></td>
                 </tr>
                 <tr>
                     <td>Lon:</td>
-                    <td><input type='text' id='place_marker_lon' ng-model="place.lon" /> </td>
+                    <td><input type='text' id='place_marker_lon' ng-model="place.lon" disabled="true" /> </td>
                 </tr>
                 <tr>
                     <td>Tyyppi:</td>
-                    <td><select id='place_marker_type' ng-model="place.typeid" ></select></td>
+                    <td>
+                        <select id='place_marker_type' ng-model="place.typeid">
+                            <option value="" selected>---Valitse---</option>
+                            @foreach (var tyyppi in Model.PaikanTyyppi)
+                            {
+                                <option value='@tyyppi.tyyppiId'>@tyyppi.tyyppi</option>
+                            }
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td>Kuvaus:</td>
@@ -28,19 +39,150 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type='button' ng-click='testi()' value='Save' id='save_place_marker' /></td>
+                    <td>
+                        <input type='button' ng-click='save_place()' value='Tallenna' id='save_place_marker' />
+                        <input type='button' ng-click='close_save_place()' value='Sulje' id='close_save_place_marker' />
+                        <input type='button' ng-click='show_place_contents()' value='Näytä tiedot' id='show_place_marker_contents' style='display:none' />
+                    </td>
                 </tr>
                 <tr>
-                    <td><div id='message_location_saved' style='display:none'>Location saved</div></td>
+                    <td>
+                        <div id='message_place_marker_saved' style='display:none'>Paikka tallennettu</div>
+                        <div id='message_place_marker_saving' style='display:none'>Tallennetaan...</div>
+                        <div id='message_place_marker_get_data' style='display:none'>Tietoja haetaan...</div>
+                    </td>
                 </tr>
             </table>
-        </div>";
+        </div>
     </div>
 
-    @Scripts.Render("~/bundles/Map")
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK8Ss9Tb1Jx-0Jv9jxJZolJruCJN1hyZk&callback=initMapPlace">
-    </script>
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <div id='showplacesform' ng-controller="ShowPlacesCtrl">
+                    <h3>Näytä paikat tyypin mukaan</h3>
+                    <select id="select_showed_place_marker_types" ng-model="selectedtypes" multiple>
+                        @foreach (var tyyppi in Model.PaikanTyyppi)
+                        {
+                            <option value='@tyyppi.tyyppiId'>@tyyppi.tyyppi</option>
+                        }
+                    </select>
+                    <input type='button' ng-click='show_places()' value='Näytä' id='show_places_of_types' />
+                    <div id='message_show_places' style='display:none'>Näytetään paikat</div>
+                    <div id='message_get_places' style='display:none'>Haetaan...</div>
+                </div>
+            </td>
+
+
+            <td>
+                <div id='showtourform' ng-controller="ShowToursCtrl">
+                    <h3>Kiertueiden työkalut</h3>
+                    <div class="tab">
+                        <button class="tablinks" onclick="openCity(event, 'Tiedot')">Kiertueiden tiedot</button>
+                        <button class="tablinks" onclick="openCity(event, 'LisaaUusi')">Lisää uusi kiertue</button>
+                        <button class="tablinks" onclick="openCity(event, 'Hallinta')">Kiertueen hallinta</button>
+                    </div>
+
+                    <div id="Tiedot" class="tabcontent">
+                        <table id="Tours" style="width: 100%">
+                            <tr>
+                                <th>Kuvaus</th>
+                                <th>Siirtyminen</th>
+                                <th>Näytä</th>
+                            </tr>
+                            @foreach (var kiertue in Model.Kiertue)
+                            {
+                                <tr>
+                                    <td>
+                                        @kiertue.kuvaus
+                                    </td>
+                                    <td>
+                                        @kiertue.Siirtymistapa.selite
+                                    </td>
+                                    <td>
+                                        <input type='button' ng-click="show_tour('@kiertue.kiertueId', '@kiertue.siirtymistapaId')" value='Näytä' id='show_tour_@kiertue.kiertueId' />
+                                        <div id='tour_fethcing_@kiertue.kiertueId' style='display:none'>Haetaan...</div>
+                                        <div id='tour_fetched_@kiertue.kiertueId' style='display:none'>Haettu</div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+
+                    <div id="LisaaUusi" class="tabcontent">
+                        <div id='addnewtourform'>
+                            <table>
+                                <tr>
+                                    <td>Kuvaus:</td>
+                                    <td><input type='text' id='new_tour_descr' name='new_tour_descr' ng-model="newtour.descr" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Siirtyminen:</td>
+                                    <td>
+                                        <select id='new_tour_moving_type' ng-model="newtour.movingtype">
+                                            <option value="" selected>---Valitse---</option>
+                                            @foreach (var tapa in Model.Siirtymistapa)
+                                            {
+                                                <option value='@tapa.tapaId'>@tapa.selite</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type='button' ng-click='add_tour()' value='Lisää' id='add_tour_btn' />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id='tour_saved' style='display:none'>Kiertue lisätty</div>
+                                        <div id='tour_saving' style='display:none'>Lisätään...</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="Hallinta" class="tabcontent">
+                        <div id='addstepstotourform'>
+                            <table>
+                                <tr>
+                                    <td>Kiertue:</td>
+                                    <td>
+                                        <select id='select_tour' ng-model="tourcontents.selectedtour">
+                                            <option value="" selected>---Valitse---</option>
+                                            @foreach (var kiertue in Model.Kiertue)
+                                            {
+                                                <option value='@kiertue.kiertueId'>@kiertue.kuvaus</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Valittu kartalta:</td>
+                                    <td><input type='button' ng-click='add_step_to_tour()' value='Lisää etappi' id='add_step_to_tour_btn' /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id='step_saved' style='display:none'>Etappi lisätty</div>
+                                        <div id='step_saving' style='display:none'>Lisätään...</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+@Scripts.Render("~/bundles/Map")
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK8Ss9Tb1Jx-0Jv9jxJZolJruCJN1hyZk&callback=initMapPlace">
+</script>
 
 
 

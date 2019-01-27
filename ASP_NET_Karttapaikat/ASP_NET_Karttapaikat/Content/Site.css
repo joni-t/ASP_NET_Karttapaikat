@@ -22,3 +22,17 @@ select,
 textarea {
     max-width: 280px;
 }
+
+table {
+    border: 1px solid blue;
+    background-color: #f1f1f1;
+}
+
+th, td {
+    text-align: left;
+    padding: 2px;
+}
+
+table tr:nth-child(odd) {
+    background-color: #fef;
+}
